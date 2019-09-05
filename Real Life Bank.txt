@@ -1,0 +1,418 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <random>
+#include <chrono>
+#include <thread> 
+using namespace std;
+
+class Bank
+{
+private:
+	char name[100] = "John Doe";
+	char add[100] = "101 Default Lane";
+	char y = 'c';
+	int balance = 0;
+	int wallet = 0;
+	vector<string> inventory;
+
+public:
+	void open_account();
+	void deposit();
+	void withdraw();
+	void display();
+	void store();
+	void gamble();
+	void shootDice(int bet);
+	void blackjack(int bet);
+};
+void Bank::open_account()
+{
+	cout << "Enter your full name: ";
+	cin.ignore();
+	cin.getline(name, 100);
+	cout << "Enter your address: ";
+	cin.ignore();
+	cin.getline(add, 100);
+	cout << "Type of account saving (s) or checking (c): ";
+	cin >> y;
+	cout << "Enter deposit amount: ";
+	cin >> balance;
+	cout << "Account Created!" << endl;
+}
+void Bank::deposit()
+{
+	int amount;
+	bool cont = true;
+	while (cont)
+	{
+		cout << "Enter deposit amount: ";
+		cin >> amount;
+		if (amount <= wallet)
+		{
+			balance += amount;
+			wallet -= amount;
+			cont = false;
+		}
+		else
+			cout << "Insufficient funds in wallet" << endl;
+		
+	}
+	
+	cout << "Current Balance: " << balance << endl;
+}
+void Bank::withdraw()
+{
+	int amount;
+	bool cont = true;
+	
+	while(cont)
+	{
+		cout << "Enter withdraw amount: ";
+		cin >> amount;
+		if (amount <= balance)
+		{
+			balance -= amount;
+			wallet += amount;
+			cont = false;
+		}
+		else
+			cout << "Insufficient Funds in Account" << endl;
+	}
+	
+	cout << "Remaining Balance: " << balance << endl;
+}
+void Bank::display()
+{
+	cout << "Your full name: " << name << endl;
+	cout << "Your address: " << add << endl;
+	cout << "Type of account: " << y << endl;
+	if (y == 'c')
+	{
+		cout << "Checkings: " << balance << endl;
+	}
+	else
+		cout << "Savings: " << balance << endl;
+	cout << "Wallet: " << wallet << endl;
+	cout << "Inventory: " << endl;
+	for (int i = 0; i < inventory.size(); i++)
+	{
+		cout << inventory[i] << endl;
+	}
+}
+void Bank::store()
+{
+	char purchase;
+	char choice;
+	string pay;
+	string store[4] = {
+	"a. Laptop - $500",
+	"b. Gaming Chair - $250",
+	"c. 60 inch flatscreen tv - $300",
+	"d. PS4 - $300" };
+	int size = sizeof(store) / sizeof(store[0]);
+	do {
+		for (int i = 0; i < size; i++)
+		{
+			cout << store[i] << endl;
+		}
+		cout << "What would you like to buy?" << endl;
+		cin >> purchase;
+		cout << "Preferred method of payment, cash or card?" << endl;
+		cin >> pay;
+		if (purchase == 'a'||purchase == 'A')
+		{
+			if (pay == "cash")
+			{
+				if (wallet >= 500)
+				{
+					wallet -= 500;
+					inventory.push_back("Laptop");
+				}
+				else
+					cout << "Insufficient Funds in Wallet" << endl;
+			}
+				
+			else
+			{
+				if (balance >= 500)
+				{
+					balance -= 500;
+					inventory.push_back("Laptop");
+				}
+				else
+					cout << "Insufficient Funds on Card" << endl;
+			}
+				
+		}
+		else if (purchase == 'b'||purchase == 'B')
+		{
+			if (pay == "cash")
+			{
+				if (wallet >= 250)
+				{
+					wallet -= 250;
+					inventory.push_back("Gaming Chair");
+				}
+				else
+					cout << "Insufficient Funds in Wallet" << endl;
+			}
+				
+			else
+			{
+				if (balance >= 250)
+				{
+					balance -= 250;
+					inventory.push_back("Gaming Chair");
+				}
+				else
+					cout << "Insufficient Funds on Card" << endl;
+			}
+				
+		}
+		else if (purchase == 'c'||purchase== 'C')
+		{
+			if (pay == "cash")
+			{
+				if (wallet >= 300)
+				{
+					wallet -= 300;
+					inventory.push_back("60 inch flatscreen tv");
+				}
+				else
+					cout << "Insufficient Funds in Wallet" << endl;
+			}
+				
+			else
+			{
+				if (balance >= 300)
+				{
+					balance -= 300;
+					inventory.push_back("60 inch flatscreen tv");
+				}
+				else
+					cout << "Insufficient Funds on Card" << endl;
+			}
+		}
+		else if (purchase == 'd'||purchase == 'D')
+		{
+			if (pay == "cash")
+			{
+				if (wallet >= 300)
+				{
+					wallet -= 300;
+					inventory.push_back("PS4");
+				}
+				else
+					cout << "Insufficient Funds in Wallet" << endl;
+			}
+				
+			else
+			{
+				if (balance >= 300)
+				{
+					balance -= 300;
+					inventory.push_back("PS4");
+				}
+				else
+					cout << "Insufficient Funds on Card" << endl;
+			}
+		}
+		cout << "Do you want to buy something else? y/n" << endl;
+		cin >> choice;
+	} while (choice == 'y' || choice == 'Y');
+	
+
+}
+void Bank::shootDice(int bet)
+{
+	random_device rd;
+	default_random_engine engine(rd());
+	uniform_int_distribution<int> d6(1, 6);
+	auto die1 = d6(engine);
+	auto die2 = d6(engine);
+	int total = die1 + die2;
+	int point = 0;
+	char guess;
+	cout << "Bets on pass or crap out? p/c" << endl;
+	cin >> guess;
+	cout << "You rolled a " << total << endl;
+	this_thread::sleep_for(chrono::milliseconds(2000));
+	if (total == 2 || total == 3 || total == 12)
+	{
+		cout << "Crap out, bets distributed" << endl;
+		if (guess == 'c')
+		{
+			wallet += (bet * 2);
+			cout << "You won! Wallet: " << wallet << endl;
+		}
+				
+		else
+		{
+			wallet -= bet;
+			cout << "You lost :( Wallet: " << wallet << endl;
+		}
+				
+	}
+
+	else if (total == 7 || total == 11)
+	{
+		cout << "Pass, bets distributed" << endl;
+		if (guess == 'p')
+		{
+			wallet += (bet * 2);
+			cout << "You won! Wallet: " << wallet << endl;
+		}
+
+		else
+		{
+			wallet -= bet;
+			cout << "You lost :( Wallet: " << wallet << endl;
+		}
+	}
+	else
+	{
+		point = total;
+		die1 = d6(engine);
+		die2 = d6(engine);
+		total = die1 + die2;
+		cout << point << " is the point" << endl;
+		cout << "You rolled a " << total << endl;
+		while (total != point && total != 7)
+		{
+			die1 = d6(engine);
+			die2 = d6(engine);
+			total = die1 + die2;
+			cout << "You rolled a " << total << endl;
+			this_thread::sleep_for(chrono::milliseconds(2000));
+		}
+		if (total == point)
+		{
+			cout << "You rolled the point, bets distributed" << endl;
+			if (guess == 'p')
+			{
+				wallet += (bet * 2);
+				cout << "You won! Wallet: " << wallet << endl;
+			}
+			else
+			{
+				wallet -= bet;
+				cout << "You lost :( Wallet: " << wallet << endl;
+			}
+		}
+		else
+		{
+			cout << "You sevened out, bets distributed" << endl;
+			if (guess == 'c')
+			{
+				wallet += (bet * 2);
+				cout << "You won! Wallet: " << wallet << endl;
+			}
+
+			else
+			{
+				wallet -= bet;
+				cout << "You lost :( Wallet: " << wallet << endl;
+			}
+		}
+
+	}
+	
+}
+void Bank::blackjack(int bet)
+{
+	cout << "Not up" << endl;
+}
+void Bank::gamble()
+{
+	char choice;
+	int bet;
+	bool cont = true;
+	while (cont)
+	{
+		cout << "a. Shoot Dice" << endl;
+		cout << "b. Blackjack...Coming Soon" << endl;
+		cin >> choice;
+		cout << "How much would you like to bet?" << endl;
+		cin >> bet;
+		if (bet <= wallet)
+		{
+			if (choice == 'a')
+			{
+				shootDice(bet);
+				cont = false;
+			}
+			else if (choice == 'b')
+			{
+				blackjack(bet);
+				cont = false;
+			}
+			else
+				cout << "That's not a form of betting" << endl;
+		}
+		else
+		{
+			cout << "You only have: " << wallet << endl;
+			cont = false;
+		}
+			
+	}
+	
+		
+}
+
+int main()
+{
+	int choice;
+	char ans;
+	Bank obj;
+	do
+	{
+		cout << "1. Open Account" << endl;
+		cout << "2. Deposit" << endl;
+		cout << "3. Withdraw" << endl;
+		cout << "4. Store" << endl;
+		cout << "5. Gamble" << endl;
+		cout << "6. Display Account" << endl;
+		cout << "7. Exit" << endl << endl;
+		cout << "Select Option: ";
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:
+			cout << "1. Open Account" << endl;
+			obj.open_account();
+			break;
+		case 2:
+			cout << "2. Deposit" << endl;
+			obj.deposit();
+			break;
+		case 3:
+			cout << "3. Withdraw" << endl;
+			obj.withdraw();
+			break;
+		case 4:
+			cout << "4. Store" << endl;
+			obj.store();
+			break;
+		case 5:
+			cout << "5. Gamble" << endl;
+			obj.gamble();
+			break;
+		case 6:
+			cout << "6. Display Account" << endl;
+			obj.display();
+			break;
+		case 7:
+			system("CLS");
+			cout << "Bank Exited" << endl;
+			return 0;
+		default:
+			cout << "Incorrect Choice" << endl;
+			break;
+		}
+		cout << "Continue? y/n" << endl;
+		cin >> ans;
+	} while (ans == 'y' || ans == 'Y');
+	
+}
